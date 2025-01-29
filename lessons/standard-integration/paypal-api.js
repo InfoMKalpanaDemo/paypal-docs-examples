@@ -29,6 +29,9 @@ export async function createOrder() {
 }
 
 export async function capturePayment(orderId) {
+  if (!isValidOrderId(orderId)) {
+    throw new Error("Invalid order ID");
+  }
   const accessToken = await generateAccessToken();
   const url = `${base}/v2/checkout/orders/${orderId}/capture`;
   const response = await fetch(url, {
@@ -63,4 +66,8 @@ async function handleResponse(response) {
 
   const errorMessage = await response.text();
   throw new Error(errorMessage);
+}
+function isValidOrderId(orderId) {
+  const orderIdPattern = /^[A-Z0-9]{17}$/; // Example pattern, adjust as needed
+  return orderIdPattern.test(orderId);
 }
